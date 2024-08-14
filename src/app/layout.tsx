@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/providers";
+import AppBar from "@/components/app-bar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +17,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers
+          defaultTheme="system"
+          attribute="class"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppBar />
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }
