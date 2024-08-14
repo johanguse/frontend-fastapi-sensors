@@ -65,7 +65,7 @@ function PageWrapper({ company, equipment }: PageProps) {
               <p>ID: {item.equipment_id}</p>
               <p>Created At: {item.created_at}</p>
               <p>Updated At: {item.updated_at}</p>
-              <Link href={`/equipment/${item.id}`} className="text-blue-500">View Equipment</Link>
+              <Link href={`/equipment/${item.id}`} className="text-blue-500">View Sensor Data</Link>
             </li>
           ))}
         </ul>
