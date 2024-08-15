@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import type { PageParams } from "@/types/next";
+import type { PageParams } from '@/types/next'
 
-import { getError } from "./auth-error-mapping";
+import { getError } from './auth-error-mapping'
 
 export default async function AuthErrorPage(props: PageParams<{}>) {
-  const { errorMessage, error } = getError(props.searchParams.error);
+  const { errorMessage, error } = getError(props.searchParams.error)
 
   return (
     <div className="size-screen container flex flex-col items-center justify-center">
@@ -20,5 +20,5 @@ export default async function AuthErrorPage(props: PageParams<{}>) {
         </div>
       </div>
     </div>
-  );
+  )
 }

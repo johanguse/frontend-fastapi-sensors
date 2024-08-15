@@ -1,54 +1,56 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
 interface Company {
-  name: string;
-  address: string;
-  id: number;
-  created_at: string;
-  updated_at: string;
+  name: string
+  address: string
+  id: number
+  created_at: string
+  updated_at: string
 }
 
 interface Equipment {
-  equipment_id: string;
-  name: string;
-  id: number;
-  created_at: string;
-  updated_at: string;
+  equipment_id: string
+  name: string
+  id: number
+  created_at: string
+  updated_at: string
 }
 
 interface PageProps {
-  company: Company;
-  equipment: Equipment[];
+  company: Company
+  equipment: Equipment[]
 }
 
 export default async function CompanyPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string }
 }) {
-  const { id } = params;
+  const { id } = params
   const [companyResponse, equipmentResponse] = await Promise.all([
     fetch(`http://127.0.0.1:8000/api/v1/companies/${id}`),
     fetch(
       `http://127.0.0.1:8000/api/v1/equipment?company_id=${id}&page=1&size=10`
     ),
-  ]);
+  ])
 
   if (!companyResponse.ok || !equipmentResponse.ok) {
-    notFound();
+    notFound()
   }
 
-  const company = await companyResponse.json();
-  const equipmentData = await equipmentResponse.json();
+  const company = await companyResponse.json()
+  const equipmentData = await equipmentResponse.json()
 
-  return <PageWrapper company={company} equipment={equipmentData.items} />;
+  return <PageWrapper company={company} equipment={equipmentData.items} />
 }
 
 function PageWrapper({ company, equipment }: PageProps) {
   return (
     <div>
-      <a href="/" className="text-blue-500">Back to home page</a>
+      <a href="/" className="text-blue-500">
+        Back to home page
+      </a>
       <div className="my-4">
         <h1>{company.name}</h1>
         <p>{company.address}</p>
@@ -65,11 +67,13 @@ function PageWrapper({ company, equipment }: PageProps) {
               <p>ID: {item.equipment_id}</p>
               <p>Created At: {item.created_at}</p>
               <p>Updated At: {item.updated_at}</p>
-              <Link href={`/equipment/${item.id}`} className="text-blue-500">View Sensor Data</Link>
+              <Link href={`/equipment/${item.id}`} className="text-blue-500">
+                View Sensor Data
+              </Link>
             </li>
           ))}
         </ul>
       </div>
     </div>
-  );
+  )
 }
