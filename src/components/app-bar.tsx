@@ -1,13 +1,16 @@
-"use client";
-import { signIn, signOut, useSession } from "next-auth/react";
-import React from "react";
-import ThemeChanger from "@/components/theme-change";
+'use client'
+
+import React from 'react'
+
+import ThemeChanger from '@/components/theme-change'
+
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 const AppBar = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
   return (
-    <div className="bg-gray-100 p-2 flex gap-5 ">
+    <div className="flex gap-5 bg-gray-100 p-2">
       <div className="ml-auto flex gap-2">
         <div>
           <ThemeChanger />
@@ -26,7 +29,7 @@ const AppBar = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AppBar;
+export default AppBar
