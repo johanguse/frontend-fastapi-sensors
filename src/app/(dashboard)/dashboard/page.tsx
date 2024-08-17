@@ -34,7 +34,7 @@ export default async function Home() {
 
   return (
     <>
-      <main className="flex flex-row items-center justify-between p-24">
+      <div>
         {data.items.map((item) => (
           <div key={item.id}>
             <h2>{item.name}</h2>
@@ -48,7 +48,7 @@ export default async function Home() {
             </Link>
           </div>
         ))}
-      </main>
+      </div>
     </>
   )
 }

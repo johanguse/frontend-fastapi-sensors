@@ -21,6 +21,7 @@ export default function SignInPage() {
     await signIn('credentials', {
       username: formValues.email,
       password: formValues.password,
+      callbackUrl: '/dashboard',
     })
   }
 

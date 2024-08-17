@@ -1,5 +1,5 @@
+import { apiUrl } from '../utils'
 import { jwtDecode } from 'jwt-decode'
-import NextAuth from 'next-auth'
 import type {
   AuthOptions,
   AuthValidity,
@@ -8,6 +8,7 @@ import type {
   User,
   UserObject,
 } from 'next-auth'
+import NextAuth from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
@@ -17,7 +18,7 @@ async function refreshAccessToken(nextAuthJWT: JWT): Promise<JWT> {
       throw new Error('No refresh token available')
     }
 
-    const res = await fetch('http://127.0.0.1:8000/api/v1/refresh_token', {
+    const res = await fetch(apiUrl('/refresh_token'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh: nextAuthJWT.data.tokens.refresh }),
@@ -66,7 +67,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const res = await fetch('http://127.0.0.1:8000/api/v1/token', {
+          const res = await fetch(apiUrl('/token'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
@@ -115,10 +116,16 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (user && account) {
-        console.log('Initial signin, token:', token, 'user:', user)
+        const decodedToken: DecodedJWT = jwtDecode(user.tokens.access)
         return {
           ...token,
-          data: user as User,
+          data: {
+            ...user,
+            user: {
+              ...user.user,
+              name: decodedToken.name || user.user.name,
+            },
+          },
         }
       }
 
@@ -161,6 +168,16 @@ export const authOptions: AuthOptions = {
         session.error = token.error
       }
       return session
+    },
+    async redirect(params: { url: string }) {
+      const { url } = params
+
+      if (!url.startsWith('http')) return url
+
+      const callbackUrl = new URL(url).searchParams.get('callbackUrl')
+      if (!callbackUrl) return url
+
+      return new URL(callbackUrl as string).pathname
     },
   },
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
-import AppBar from '@/components/app-bar'
 import { Providers } from '@/components/providers'
 
 import './globals.css'
@@ -27,7 +26,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppBar />
           {children}
         </Providers>
       </body>
