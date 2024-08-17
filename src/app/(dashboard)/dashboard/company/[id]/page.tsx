@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { apiUrl } from '@/lib/utils'
+
 interface Company {
   name: string
   address: string
@@ -28,29 +30,40 @@ export default async function CompanyPage({
   params: { id: string }
 }) {
   const { id } = params
-  const [companyResponse, equipmentResponse] = await Promise.all([
-    fetch(`http://127.0.0.1:8000/api/v1/companies/${id}`),
-    fetch(
-      `http://127.0.0.1:8000/api/v1/equipment?company_id=${id}&page=1&size=10`
-    ),
-  ])
 
-  if (!companyResponse.ok || !equipmentResponse.ok) {
-    notFound()
+  try {
+    const [companyResponse, equipmentResponse] = await Promise.all([
+      fetch(apiUrl(`/companies/${id}`)),
+      fetch(apiUrl(`/equipment`, { company_id: id, page: '1', size: '10' })),
+    ])
+
+    if (!companyResponse.ok || !equipmentResponse.ok) {
+      notFound()
+    }
+
+    const companyData = (await companyResponse.json()) as Company
+    const equipmentData = (await equipmentResponse.json()) as {
+      items: Equipment[]
+    }
+
+    return <PageWrapper company={companyData} equipment={equipmentData.items} />
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error in CompanyPage:', error)
+      notFound()
+    } else {
+      console.error('Unexpected error in CompanyPage:', error)
+      notFound()
+    }
   }
-
-  const company = await companyResponse.json()
-  const equipmentData = await equipmentResponse.json()
-
-  return <PageWrapper company={company} equipment={equipmentData.items} />
 }
 
 function PageWrapper({ company, equipment }: PageProps) {
   return (
     <div>
-      <a href="/" className="text-blue-500">
+      <Link href="/" className="text-blue-500">
         Back to home page
-      </a>
+      </Link>
       <div className="my-4">
         <h1>{company.name}</h1>
         <p>{company.address}</p>
@@ -67,7 +80,10 @@ function PageWrapper({ company, equipment }: PageProps) {
               <p>ID: {item.equipment_id}</p>
               <p>Created At: {item.created_at}</p>
               <p>Updated At: {item.updated_at}</p>
-              <Link href={`/equipment/${item.id}`} className="text-blue-500">
+              <Link
+                href={`/dashboard/equipment/${item.id}`}
+                className="text-blue-500"
+              >
                 View Sensor Data
               </Link>
             </li>
