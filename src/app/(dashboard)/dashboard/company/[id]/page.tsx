@@ -47,7 +47,7 @@ function PageWrapper({ company, equipment }: PageProps) {
       </div>
       <div>
         <h2 className="text-xl underline">Equipment list</h2>
-        <ul className="mt-8 flex flex-row gap-12">
+        <ul className="mt-8 flex flex-col gap-12 md:flex-row">
           {equipment.map((item) => (
             <li key={item.id} className="flex flex-col gap-1">
               <h3>{item.name}</h3>

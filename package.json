@@ -22,7 +22,6 @@
     "@react-aria/datepicker": "^3.11.1",
     "@react-stately/datepicker": "^3.10.1",
     "@remixicon/react": "^4.2.0",
-    "@t3-oss/env-nextjs": "^0.11.0",
     "jwt-decode": "^4.0.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
