@@ -115,3 +115,8 @@ export const formatters: { [key: string]: any } = {
     }).format(number),
   unit: (number: number) => `${usNumberformatter(number)}`,
 }
+
+export function formatDate(timestamp?: number): string {
+  if (!timestamp) return 'N/A'
+  return new Date(timestamp * 1000).toLocaleString()
+}

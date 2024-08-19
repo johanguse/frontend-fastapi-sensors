@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { apiUrl } from '@/lib/utils'
+
 import { useSession } from 'next-auth/react'
 
 export default function UploadPage() {
@@ -32,16 +34,13 @@ export default function UploadPage() {
 
     try {
       if (session?.user.tokens.access) {
-        const response = await fetch(
-          'http://127.0.0.1:8000/api/v1/upload-csv/',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${session?.user.tokens.access}`,
-            },
-            body: formData,
-          }
-        )
+        const response = await fetch(apiUrl('/upload-csv'), {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session?.user.tokens.access}`,
+          },
+          body: formData,
+        })
 
         if (response.ok) {
           setSuccessMessage('File uploaded successfully!')

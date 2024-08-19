@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { formatDate } from '@/lib/utils'
+
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 export const dynamic = 'force-dynamic'
@@ -61,7 +63,6 @@ export default function SettingsPage() {
     <div className="p-4">
       <h1 className="mb-2 text-2xl font-bold">Settings</h1>
       <div className="flex flex-col gap-1">
-        <p>You can view this page because you are signed in.</p>
         <p>Signed in as: {session?.user?.name || 'Unknown User'}</p>
         <p>Username: {session?.user?.username || 'Unknown'}</p>
         <p>
@@ -85,9 +86,4 @@ export default function SettingsPage() {
       </div>
     </div>
   )
-}
-
-function formatDate(timestamp?: number): string {
-  if (!timestamp) return 'N/A'
-  return new Date(timestamp * 1000).toLocaleString()
 }
