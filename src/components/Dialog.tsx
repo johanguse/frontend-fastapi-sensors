@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { cn, focusRing } from '@/lib/utils'
+import { focusRing } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import * as DialogPrimitives from '@radix-ui/react-dialog'
 

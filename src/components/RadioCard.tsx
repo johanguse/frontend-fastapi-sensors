@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { cn, focusInput, focusRing } from '@/lib/utils'
+import { focusInput, focusRing } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import * as RadioGroupPrimitives from '@radix-ui/react-radio-group'
 

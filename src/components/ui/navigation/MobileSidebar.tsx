@@ -3,7 +3,8 @@ import { usePathname } from 'next/navigation'
 
 import { siteConfig } from '@/config/siteConfig'
 
-import { cn, focusRing } from '@/lib/utils'
+import { focusRing } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/Button'
 import {

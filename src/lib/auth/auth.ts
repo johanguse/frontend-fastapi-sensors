@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode'
 import type {
   AuthOptions,
   AuthValidity,
-  BackendAccessJWT,
   DecodedJWT,
   User,
   UserObject,
@@ -12,35 +11,43 @@ import NextAuth from 'next-auth'
 import type { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-async function refreshAccessToken(nextAuthJWT: JWT): Promise<JWT> {
+async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    if (!nextAuthJWT.data?.tokens?.refresh) {
-      throw new Error('No refresh token available')
-    }
-
-    const res = await fetch(apiUrl('/refresh_token'), {
+    const response = await fetch(apiUrl('/refresh_token'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh: nextAuthJWT.data.tokens.refresh }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token.data.tokens.access}`,
+      },
+      body: JSON.stringify({ refresh_token: token.data.tokens.refresh }),
     })
-    const accessToken: BackendAccessJWT = await res.json()
 
-    if (!res.ok) throw accessToken
+    const refreshedTokens = await response.json()
 
-    if (typeof accessToken.access_token !== 'string') {
-      throw new Error('Invalid access token received')
+    if (!response.ok) {
+      throw refreshedTokens
     }
 
-    const { exp }: DecodedJWT = jwtDecode(accessToken.access_token)
+    const decodedToken: DecodedJWT = jwtDecode(refreshedTokens.access_token)
 
-    nextAuthJWT.data.validity.valid_until = exp
-    nextAuthJWT.data.tokens.access = accessToken.access_token
-
-    return nextAuthJWT
+    return {
+      ...token,
+      data: {
+        ...token.data,
+        tokens: {
+          access: refreshedTokens.access_token,
+          refresh: refreshedTokens.refresh_token,
+        },
+        validity: {
+          valid_until: decodedToken.exp,
+          refresh_until: decodedToken.exp + 7 * 24 * 60 * 60,
+        },
+      },
+    }
   } catch (error) {
     console.error('Error refreshing access token:', error)
     return {
-      ...nextAuthJWT,
+      ...token,
       error: 'RefreshAccessTokenError',
     }
   }
@@ -75,12 +82,18 @@ export const authOptions: AuthOptions = {
               password: credentials?.password ?? '',
             }),
           })
-          const tokens: { access_token: string; token_type: string } =
-            await res.json()
+          const tokens: {
+            access_token: string
+            refresh_token: string
+            token_type: string
+          } = await res.json()
 
           if (!res.ok) throw new Error('Failed to authenticate')
 
-          if (typeof tokens.access_token !== 'string') {
+          if (
+            typeof tokens.access_token !== 'string' ||
+            typeof tokens.refresh_token !== 'string'
+          ) {
             throw new Error('Invalid token format received')
           }
 
@@ -94,14 +107,14 @@ export const authOptions: AuthOptions = {
 
           const validity: AuthValidity = {
             valid_until: access.exp,
-            refresh_until: access.exp,
+            refresh_until: access.exp + 7 * 24 * 60 * 60,
           }
 
           return {
             id: access.jti ?? 'unknown',
             tokens: {
               access: tokens.access_token,
-              refresh: tokens.access_token,
+              refresh: tokens.refresh_token,
             },
             user: user,
             validity: validity,
@@ -114,18 +127,11 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
-      if (user && account) {
-        const decodedToken: DecodedJWT = jwtDecode(user.tokens.access)
+    async jwt({ token, user }) {
+      if (user) {
         return {
           ...token,
-          data: {
-            ...user,
-            user: {
-              ...user.user,
-              name: decodedToken.name || user.user.name,
-            },
-          },
+          data: user,
         }
       }
 
@@ -142,17 +148,14 @@ export const authOptions: AuthOptions = {
         }
       }
 
-      if (Date.now() < token.data.validity.valid_until * 1000) {
-        console.log('Access token is still valid')
+      if (Date.now() / 1000 < token.data.validity.valid_until) {
         return token
       }
 
-      if (Date.now() < token.data.validity.refresh_until * 1000) {
-        console.log('Access token is being refreshed')
+      if (Date.now() / 1000 < token.data.validity.refresh_until) {
         return await refreshAccessToken(token)
       }
 
-      console.log('Both tokens have expired')
       return {
         ...token,
         error: 'RefreshTokenExpired',
@@ -161,23 +164,42 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (token.data) {
-        session.user = token.data.user
+        session.user = {
+          ...session.user,
+          ...token.data.user,
+          tokens: token.data.tokens,
+        }
         session.validity = token.data.validity
       }
       if (token.error) {
         session.error = token.error
       }
+
       return session
     },
-    async redirect(params: { url: string }) {
-      const { url } = params
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) {
+        url = `${baseUrl}${url}`
+      } else if (url.startsWith('http')) {
+        url = url
+      } else {
+        url = `${baseUrl}/${url}`
+      }
 
-      if (!url.startsWith('http')) return url
+      const parsedUrl = new URL(url)
+      const callbackUrl = parsedUrl.searchParams.get('callbackUrl')
 
-      const callbackUrl = new URL(url).searchParams.get('callbackUrl')
-      if (!callbackUrl) return url
+      if (callbackUrl) {
+        const decodedCallbackUrl = decodeURIComponent(callbackUrl)
+        try {
+          new URL(decodedCallbackUrl)
+          return decodedCallbackUrl
+        } catch {
+          return `${baseUrl}${decodedCallbackUrl.startsWith('/') ? '' : '/'}${decodedCallbackUrl}`
+        }
+      }
 
-      return new URL(callbackUrl as string).pathname
+      return url
     },
   },
 }

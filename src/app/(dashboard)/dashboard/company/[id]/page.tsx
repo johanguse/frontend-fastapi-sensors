@@ -1,23 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { apiUrl } from '@/lib/utils'
+import { getData } from '@/lib/utils'
 
-interface Company {
-  name: string
-  address: string
-  id: number
-  created_at: string
-  updated_at: string
-}
-
-interface Equipment {
-  equipment_id: string
-  name: string
-  id: number
-  created_at: string
-  updated_at: string
-}
+import { Company, Equipment } from '@/types'
 
 interface PageProps {
   company: Company
@@ -32,29 +18,19 @@ export default async function CompanyPage({
   const { id } = params
 
   try {
-    const [companyResponse, equipmentResponse] = await Promise.all([
-      fetch(apiUrl(`/companies/${id}`)),
-      fetch(apiUrl(`/equipment`, { company_id: id, page: '1', size: '10' })),
+    const [company, equipmentData] = await Promise.all([
+      getData<Company>(`/companies/${id}`),
+      getData<{ items: Equipment[] }>('/equipment', {
+        company_id: id,
+        page: '1',
+        size: '10',
+      }),
     ])
 
-    if (!companyResponse.ok || !equipmentResponse.ok) {
-      notFound()
-    }
-
-    const companyData = (await companyResponse.json()) as Company
-    const equipmentData = (await equipmentResponse.json()) as {
-      items: Equipment[]
-    }
-
-    return <PageWrapper company={companyData} equipment={equipmentData.items} />
+    return <PageWrapper company={company} equipment={equipmentData.items} />
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error in CompanyPage:', error)
-      notFound()
-    } else {
-      console.error('Unexpected error in CompanyPage:', error)
-      notFound()
-    }
+    console.error('Error in CompanyPage:', error)
+    notFound()
   }
 }
 

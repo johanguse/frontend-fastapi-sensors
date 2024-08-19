@@ -9,6 +9,7 @@ declare module 'next-auth' {
 
   export interface BackendAccessJWT {
     access_token: string
+    refresh_token: string
     token_type: string
   }
 
@@ -38,7 +39,9 @@ declare module 'next-auth' {
   }
 
   export interface Session {
-    user: UserObject
+    user: UserObject & {
+      tokens: BackendJWT
+    }
     validity: AuthValidity
     error?: 'RefreshTokenExpired' | 'RefreshAccessTokenError' | 'InvalidToken'
   }
@@ -46,7 +49,11 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   export interface JWT {
-    data: User
+    data: {
+      tokens: BackendJWT
+      user: UserObject
+      validity: AuthValidity
+    }
     error?: 'RefreshTokenExpired' | 'RefreshAccessTokenError' | 'InvalidToken'
   }
 }
