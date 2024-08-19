@@ -4,7 +4,7 @@
 
 This project is runnig live on [frontend-fastapi-sensors.vercel.app](https://frontend-fastapi-sensors.vercel.app/).
 
-### ⚠️ Atention
+### ⚠️ Attention
 ### This project depends of backend [backend-fastapi-sensors](https://github.com/johanguse/backend-fastapi-sensors) to run.
 
 

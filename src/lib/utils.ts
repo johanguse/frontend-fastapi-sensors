@@ -6,6 +6,10 @@ import { ClassValue, clsx } from 'clsx'
 import { getServerSession } from 'next-auth/next'
 import { twMerge } from 'tailwind-merge'
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_APIBASEURL || 'http://127.0.0.1:8000'
+const API_PREFIX = process.env.NEXT_PUBLIC_APIPREFIX || '/api/v1'
+
 /**
  * Combines class names using clsx and tailwind-merge.
  * @param inputs - A variadic set of class values to be combined.
@@ -24,14 +28,13 @@ export function cn(...inputs: ClassValue[]) {
  * @returns {string} The fully qualified API URL.
  */
 export function apiUrl(path: string, params?: Record<string, string>): string {
-  let url = `${process.env.APIBASEURL}${process.env.APIPREFIX}${path}`
-
+  const url = new URL(API_PREFIX + path, API_BASE_URL)
   if (params) {
-    const queryParams = new URLSearchParams(params).toString()
-    url += `?${queryParams}`
+    Object.entries(params).forEach(([key, value]) => {
+      url.searchParams.append(key, value)
+    })
   }
-
-  return url
+  return url.toString()
 }
 
 /**
