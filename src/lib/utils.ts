@@ -57,6 +57,7 @@ export async function getData<T>(
     headers: {
       Authorization: `Bearer ${session.user.tokens.access}`,
     },
+    credentials: 'include',
     cache: 'no-store',
   })
 

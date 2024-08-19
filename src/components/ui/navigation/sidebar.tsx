@@ -9,7 +9,7 @@ import { focusRing } from '@/lib/inputsUtils'
 import { cn } from '@/lib/utils'
 
 import MobileSidebar from './MobileSidebar'
-import { UserProfileMobile } from './UserProfile'
+import { UserProfileDesktop, UserProfileMobile } from './UserProfile'
 import {
   RiDatabaseLine,
   RiHome2Line,
@@ -109,6 +109,9 @@ export function Sidebar() {
               </ul>
             </div>
           </nav>
+          <div className="mt-auto">
+            <UserProfileDesktop />
+          </div>
         </aside>
       </nav>
       {/* top navbar (xs-lg) */}

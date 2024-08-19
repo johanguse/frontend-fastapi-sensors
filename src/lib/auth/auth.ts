@@ -20,6 +20,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         Authorization: `Bearer ${token.data.tokens.access}`,
       },
       body: JSON.stringify({ refresh_token: token.data.tokens.refresh }),
+      credentials: 'include',
     })
 
     const refreshedTokens = await response.json()
