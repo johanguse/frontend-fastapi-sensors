@@ -5,14 +5,8 @@ import { useState } from 'react'
 import { ChartCard } from '@/components/ui/chart/DashboardChartCard'
 import { Filterbar } from '@/components/ui/chart/DashboardFilterbar'
 
+import { SensorData } from '@/types'
 import { DateRange } from 'react-day-picker'
-
-interface SensorData {
-  equipment_id: number
-  timestamp: string
-  value: number
-  id: number
-}
 
 interface SensorDataDashboardProps {
   sensorData: SensorData[]
@@ -37,8 +31,7 @@ export default function SensorDataDashboard({
     .sort((a, b) => a.date.getTime() - b.date.getTime())
 
   return (
-    <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Sensor Data Dashboard</h1>
+    <div>
       <Filterbar
         selectedDates={selectedDates}
         onDatesChange={handleDatesChange}

@@ -36,29 +36,25 @@ export default async function CompanyPage({
 
 function PageWrapper({ company, equipment }: PageProps) {
   return (
-    <div>
-      <Link href="/" className="text-blue-500">
-        Back to home page
+    <div className="p-4">
+      <Link href="/dashboard" className="mb-8 text-sm text-blue-500">
+        Back to dashboard
       </Link>
-      <div className="my-4">
-        <h1>{company.name}</h1>
-        <p>{company.address}</p>
-        <p>ID: {company.id}</p>
-        <p>Created At: {company.created_at}</p>
-        <p>Updated At: {company.updated_at}</p>
+
+      <div className="mb-12 mt-4">
+        <h1 className="mb-2 text-2xl font-bold">{company.name}</h1>
+        <p className="text-sm">{company.address}</p>
       </div>
       <div>
-        <h2>Equipment</h2>
+        <h2 className="text-xl underline">Equipment list</h2>
         <ul>
           {equipment.map((item) => (
             <li key={item.id} className="my-4">
               <h3>{item.name}</h3>
               <p>ID: {item.equipment_id}</p>
-              <p>Created At: {item.created_at}</p>
-              <p>Updated At: {item.updated_at}</p>
               <Link
                 href={`/dashboard/equipment/${item.id}`}
-                className="text-blue-500"
+                className="text-indigo-600 dark:text-indigo-400"
               >
                 View Sensor Data
               </Link>

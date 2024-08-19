@@ -4,9 +4,8 @@ export const siteConfig = {
   description: 'Sensor Data Dashboard for Sensor Analytics',
   baseLinks: {
     home: '/',
-    overview: '/dashboard',
-    details: '/details',
-    settings: '/settings',
+    overview: '/dashboard/overview',
+    settings: '/dashboard/settings',
   },
   externalLink: {
     blocks: 'https://github.com/johanguse',
