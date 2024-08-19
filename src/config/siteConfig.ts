@@ -5,6 +5,7 @@ export const siteConfig = {
   baseLinks: {
     home: '/',
     overview: '/dashboard/overview',
+    addData: '/dashboard/add-data',
     settings: '/dashboard/settings',
   },
   externalLink: {

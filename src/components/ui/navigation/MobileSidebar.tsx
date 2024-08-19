@@ -18,6 +18,7 @@ import {
 } from '@/components/Drawer'
 
 import {
+  RiDatabaseLine,
   RiHome2Line,
   RiLinkM,
   RiMenuLine,
@@ -26,6 +27,11 @@ import {
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.overview, icon: RiHome2Line },
+  {
+    name: 'Add data',
+    href: siteConfig.baseLinks.addData,
+    icon: RiDatabaseLine,
+  },
   {
     name: 'Settings',
     href: siteConfig.baseLinks.settings,
