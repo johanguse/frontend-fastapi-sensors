@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
         Authorization: `Bearer ${token.data.tokens.access}`,
       },
       body: JSON.stringify({ refresh_token: refreshToken }),
+      credentials: 'include',
     })
 
     if (!response.ok) {

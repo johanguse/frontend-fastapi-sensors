@@ -34,12 +34,13 @@ export default function UploadPage() {
 
     try {
       if (session?.user.tokens.access) {
-        const response = await fetch(apiUrl('/upload-csv'), {
+        const response = await fetch(apiUrl('/upload-csv/'), {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${session?.user.tokens.access}`,
           },
           body: formData,
+          credentials: 'include',
         })
 
         if (response.ok) {
