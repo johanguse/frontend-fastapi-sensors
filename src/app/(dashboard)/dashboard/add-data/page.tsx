@@ -37,23 +37,29 @@ export default function UploadPage() {
         const response = await fetch(apiUrl('/upload-csv/'), {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${session?.user.tokens.access}`,
+            Authorization: `Bearer ${session.user.tokens.access}`,
           },
           body: formData,
           credentials: 'include',
         })
 
+        const data = await response.json()
+
         if (response.ok) {
-          setSuccessMessage('File uploaded successfully!')
+          setSuccessMessage(
+            `File uploaded successfully! ${data.sensors_added || ''} sensors added.`
+          )
         } else {
-          setError('Failed to upload the file.')
+          setError(
+            data.detail || 'Failed to upload the file. Please try again.'
+          )
         }
       } else {
         setError('No access token available. Please sign in again.')
       }
     } catch (error) {
       console.error('Error uploading file:', error)
-      setError('An error occurred while uploading the file.')
+      setError('An error occurred while uploading the file. Please try again.')
     } finally {
       setIsUploading(false)
     }
@@ -109,9 +115,17 @@ export default function UploadPage() {
           onChange={handleFileChange}
           className="mb-4 rounded border border-gray-300 p-2"
         />
-        {error && <div className="mb-4 text-red-500">{error}</div>}
+        {error && (
+          <div className="mb-4 rounded bg-red-100 p-3 text-red-700">
+            <strong>Error: </strong>
+            {error}
+          </div>
+        )}
         {successMessage && (
-          <div className="mb-4 text-green-500">{successMessage}</div>
+          <div className="mb-4 rounded bg-green-100 p-3 text-green-700">
+            <strong>Success: </strong>
+            {successMessage}
+          </div>
         )}
         <button
           onClick={handleUpload}

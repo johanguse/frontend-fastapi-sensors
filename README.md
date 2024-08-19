@@ -3,6 +3,8 @@
 # Sensor Data Dashboard
 
 This project is runnig live on [frontend-fastapi-sensors.vercel.app](https://frontend-fastapi-sensors.vercel.app/).
+Sample file to add data link on dashboard:
+[sample_sensor_data_user_id-1](https://github.com/johanguse/backend-fastapi-sensors/blob/main/docker/sample_sensor_data_user_id-1.csv)
 
 ### ⚠️ Attention
 ### This project depends of backend [backend-fastapi-sensors](https://github.com/johanguse/backend-fastapi-sensors) to run.
