@@ -14,10 +14,20 @@ import {
   WorkspacesDropdownMobile,
 } from './SidebarWorkspacesDropdown'
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile'
-import { RiHome2Line, RiLinkM, RiSettings5Line } from '@remixicon/react'
+import {
+  RiDatabaseLine,
+  RiHome2Line,
+  RiLinkM,
+  RiSettings5Line,
+} from '@remixicon/react'
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.overview, icon: RiHome2Line },
+  {
+    name: 'Add data',
+    href: siteConfig.baseLinks.addData,
+    icon: RiDatabaseLine,
+  },
   {
     name: 'Settings',
     href: siteConfig.baseLinks.settings,

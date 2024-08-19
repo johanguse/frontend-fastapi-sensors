@@ -47,17 +47,19 @@ function PageWrapper({ company, equipment }: PageProps) {
       </div>
       <div>
         <h2 className="text-xl underline">Equipment list</h2>
-        <ul>
+        <ul className="mt-8 flex flex-row gap-12">
           {equipment.map((item) => (
-            <li key={item.id} className="my-4">
+            <li key={item.id} className="flex flex-col gap-1">
               <h3>{item.name}</h3>
               <p>ID: {item.equipment_id}</p>
-              <Link
-                href={`/dashboard/equipment/${item.id}`}
-                className="text-indigo-600 dark:text-indigo-400"
-              >
-                View Sensor Data
-              </Link>
+              <div className="mt-2">
+                <Link
+                  href={`/dashboard/equipment/${item.id}`}
+                  className="text-indigo-600 dark:text-indigo-400"
+                >
+                  View Sensor Data
+                </Link>
+              </div>
             </li>
           ))}
         </ul>
