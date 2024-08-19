@@ -1,16 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { apiUrl } from '@/lib/utils'
+import { getData } from '@/lib/utils'
 
 import SensorDataDashboard from '@/components/ui/chart/SensorDataDashboard'
 
-interface SensorData {
-  equipment_id: number
-  timestamp: string
-  value: number
-  id: number
-}
+import { SensorDataResponse } from '@/types'
 
 export default async function EquipmentPage({
   params,
@@ -20,15 +15,11 @@ export default async function EquipmentPage({
   const { id } = params
 
   try {
-    const sensorResponse = await fetch(
-      apiUrl(`/sensor-data`, { equipment_id: id, limit: '50', offset: '0' })
-    )
-
-    if (!sensorResponse.ok) {
-      notFound()
-    }
-
-    const sensorData: { items: SensorData[] } = await sensorResponse.json()
+    const sensorData = await getData<SensorDataResponse>('/sensor-data', {
+      equipment_id: id,
+      limit: '50',
+      offset: '0',
+    })
 
     return (
       <div className="container mx-auto">
@@ -41,12 +32,7 @@ export default async function EquipmentPage({
       </div>
     )
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error in EquipmentPage:', error)
-      notFound()
-    } else {
-      console.error('Unexpected error in EquipmentPage:', error)
-      notFound()
-    }
+    console.error('Error in EquipmentPage:', error)
+    notFound()
   }
 }

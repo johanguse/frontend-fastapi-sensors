@@ -1,7 +1,8 @@
 // Tremor Raw Select [v0.0.2]
 import React from 'react'
 
-import { cn, focusInput, hasErrorInput } from '@/lib/utils'
+import { focusInput, hasErrorInput } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import * as SelectPrimitives from '@radix-ui/react-select'
 

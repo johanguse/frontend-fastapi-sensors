@@ -1,6 +1,7 @@
 'use client'
 
-import { cn, focusRing, getInitials } from '@/lib/utils'
+import { focusRing } from '@/lib/inputsUtils'
+import { cn, getInitials } from '@/lib/utils'
 
 import { Button } from '@/components/Button'
 

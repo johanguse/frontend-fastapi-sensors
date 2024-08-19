@@ -1,4 +1,8 @@
+import { authOptions } from '@/lib/auth/auth'
+
 import { ClassValue, clsx } from 'clsx'
+import { getServerSession } from 'next-auth/next'
+import { getSession } from 'next-auth/react'
 import { twMerge } from 'tailwind-merge'
 
 /**
@@ -30,49 +34,64 @@ export function apiUrl(path: string, params?: Record<string, string>): string {
 }
 
 /**
- * Fetches JSON data from a given URL and handles errors.
- * @param input - The URL to fetch data from.
- * @param init - Additional options for the fetch request.
- * @returns A promise that resolves with the fetched JSON data.
+ * Fetches data from the API with authentication.
+ *
+ * @param path - The API endpoint path.
+ * @param params - Optional query parameters.
+ * @returns The fetched data as JSON.
+ * @throws Error if not authenticated or if the fetch fails.
  */
+export async function getData<T>(
+  path: string,
+  params?: Record<string, string>
+): Promise<T> {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.tokens?.access) {
+    throw new Error('Not authenticated')
+  }
+
+  const url = apiUrl(path, params)
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${session.user.tokens.access}`,
+    },
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch data: ${res.statusText}`)
+  }
+
+  return res.json()
+}
+
 export async function fetcher<JSON = any>(
   input: RequestInfo,
   init?: RequestInit
 ): Promise<JSON> {
-  const res = await fetch(input, init)
+  const session = await getSession()
+
+  if (!session?.user) {
+    throw new Error('Not authenticated')
+  }
+
+  const headers = new Headers(init?.headers)
+  headers.set('Authorization', `Bearer ${session.user.tokens.access}`)
+
+  const res = await fetch(input, {
+    ...init,
+    headers,
+  })
 
   if (!res.ok) {
     const contentType = res.headers.get('Content-Type')
     if (contentType?.includes('application/json')) {
-      try {
-        const json = await res.json()
-        if (json.error) {
-          const error = new Error(json.error) as Error & {
-            status: number
-          }
-          error.status = res.status
-          throw error
-        } else {
-          throw new Error('An unexpected error occurred')
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          throw error
-        } else {
-          throw new Error('An unexpected error occurred')
-        }
-      }
+      const json = await res.json()
+      throw new Error(json.error || 'An unexpected error occurred')
     } else {
-      try {
-        const text = await res.text()
-        throw new Error(`Unexpected response: ${text}`)
-      } catch (error) {
-        if (error instanceof Error) {
-          throw error
-        } else {
-          throw new Error('An unexpected error occurred')
-        }
-      }
+      const text = await res.text()
+      throw new Error(`Unexpected response: ${text}`)
     }
   }
 
@@ -109,31 +128,6 @@ export function getInitials(name: string | null | undefined): string {
 
   return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase()
 }
-
-export const focusInput = [
-  // base
-  'focus:ring-2',
-  // ring color
-  'focus:ring-indigo-200 focus:dark:ring-indigo-700/30',
-  // border color
-  'focus:border-indigo-500 focus:dark:border-indigo-700',
-]
-
-export const focusRing = [
-  // base
-  'outline outline-offset-2 outline-0 focus-visible:outline-2',
-  // outline color
-  'outline-indigo-500 dark:outline-indigo-500',
-]
-
-export const hasErrorInput = [
-  // base
-  'ring-2',
-  // border color
-  'border-red-500 dark:border-red-700',
-  // ring color
-  'ring-red-200 dark:ring-red-700/30',
-]
 
 // Number formatter function
 export const usNumberformatter = (number: number, decimals = 0) =>

@@ -2,7 +2,8 @@
 
 import React from 'react'
 
-import { cn, focusInput } from '@/lib/utils'
+import { focusInput } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import {
   DropdownMenu,

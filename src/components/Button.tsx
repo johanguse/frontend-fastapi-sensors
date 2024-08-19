@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { cn, focusRing } from '@/lib/utils'
+import { focusRing } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import { Slot } from '@radix-ui/react-slot'
 

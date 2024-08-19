@@ -1,54 +1,88 @@
-import Link from 'next/link'
+'use client'
 
-import { apiUrl } from '@/lib/utils'
+import { useState } from 'react'
 
-interface CompanyItem {
-  name: string
-  slug: string
-  address: string
-  id: number
-  created_at: string
-  updated_at: string
-}
+import { signIn, signOut, useSession } from 'next-auth/react'
 
-interface CompanyData {
-  items: CompanyItem[]
-  total: number
-  page: number
-  size: number
-  pages: number
-}
+export const dynamic = 'force-dynamic'
 
-async function getData(): Promise<CompanyData> {
-  const res = await fetch(apiUrl('/companies', { page: '1', size: '10' }))
+export default function Home() {
+  const { data: session, status, update } = useSession()
+  const [refreshStatus, setRefreshStatus] = useState<string | null>(null)
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
+  const handleRefreshToken = async () => {
+    setRefreshStatus('Refreshing...')
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_URL + '/api/auth/refresh_token',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to refresh token')
+      }
+
+      await update()
+      setRefreshStatus('Token refreshed successfully')
+    } catch (error) {
+      console.error('Error refreshing token:', error)
+      setRefreshStatus('Failed to refresh token')
+    }
   }
 
-  return res.json()
-}
+  if (status === 'loading') {
+    return <p>Loading...</p>
+  }
 
-export default async function Home() {
-  const data = await getData()
+  if (status === 'unauthenticated') {
+    return (
+      <>
+        <p>Not signed in</p>
+        <p>URL: {process.env.NEXT_PUBLIC_URL}</p>
+        <button
+          onClick={() =>
+            signIn('credentials', {
+              callbackUrl: process.env.NEXT_PUBLIC_URL + '/dashboard',
+            })
+          }
+        >
+          Sign in with Credentials
+        </button>
+      </>
+    )
+  }
 
   return (
     <>
-      <main className="flex flex-row items-center justify-between p-24">
-        {data.items.map((item) => (
-          <div key={item.id}>
-            <h2>{item.name}</h2>
-            <p>{item.slug}</p>
-            <p>{item.address}</p>
-            <Link
-              href={`dashboard/company/${item.id}`}
-              className="text-blue-500"
-            >
-              View Company
-            </Link>
-          </div>
-        ))}
-      </main>
+      <h1>Protected Page</h1>
+      <p>URL: {process.env.NEXT_PUBLIC_URL}</p>
+      <p>You can view this page because you are signed in.</p>
+      <p>Signed in as: {session?.user?.name || 'Unknown User'}</p>
+      <p>Username: {session?.user?.username || 'Unknown'}</p>
+      <p>
+        Access token valid until: {formatDate(session?.validity?.valid_until)}
+      </p>
+      <p>
+        Access token refresh until:{' '}
+        {formatDate(session?.validity?.refresh_until)}
+      </p>
+      <h2>Full Session Data:</h2>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
+      <button onClick={() => signOut()}>Sign out</button>
+      <br />
+      <br />
+      <button onClick={handleRefreshToken}>Refresh Token</button>
+      {refreshStatus && <p>{refreshStatus}</p>}
     </>
   )
+}
+
+function formatDate(timestamp?: number): string {
+  if (!timestamp) return 'N/A'
+  return new Date(timestamp * 1000).toLocaleString()
 }

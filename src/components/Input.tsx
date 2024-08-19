@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { cn, focusInput, focusRing, hasErrorInput } from '@/lib/utils'
+import { focusInput, focusRing, hasErrorInput } from '@/lib/inputsUtils'
+import { cn } from '@/lib/utils'
 
 import { RiEyeFill, RiEyeOffFill, RiSearchLine } from '@remixicon/react'
 import { type VariantProps, tv } from 'tailwind-variants'
