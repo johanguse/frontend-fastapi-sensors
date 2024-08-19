@@ -17,13 +17,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/Dropdown'
 
-import {
-  RiArrowRightUpLine,
-  RiComputerLine,
-  RiMoonLine,
-  RiSunLine,
-} from '@remixicon/react'
-import { useSession } from 'next-auth/react'
+import { RiComputerLine, RiMoonLine, RiSunLine } from '@remixicon/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
 export type DropdownUserProfileProps = {
@@ -96,30 +91,10 @@ export function DropdownUserProfile({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Changelog
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
+            <button onClick={() => signOut()} className="text-red-500">
+              Sign out
+            </button>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Documentation
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Join Slack community
-            <RiArrowRightUpLine
-              className="mb-1 ml-1 size-2.5 shrink-0 text-gray-500"
-              aria-hidden="true"
-            />
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Sign out</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

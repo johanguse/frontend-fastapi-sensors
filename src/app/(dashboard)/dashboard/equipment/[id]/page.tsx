@@ -22,11 +22,11 @@ export default async function EquipmentPage({
     })
 
     return (
-      <div className="container mx-auto">
-        <Link href="/" className="text-blue-500">
-          Back to home page
+      <div className="p-4">
+        <Link href="/dashboard" className="text-sm text-blue-500">
+          Back to dashboard
         </Link>
-        <div>
+        <div className="mt-4">
           <SensorDataDashboard sensorData={sensorData.items} />
         </div>
       </div>

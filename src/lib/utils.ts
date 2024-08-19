@@ -1,8 +1,9 @@
+import { redirect } from 'next/navigation'
+
 import { authOptions } from '@/lib/auth/auth'
 
 import { ClassValue, clsx } from 'clsx'
 import { getServerSession } from 'next-auth/next'
-import { getSession } from 'next-auth/react'
 import { twMerge } from 'tailwind-merge'
 
 /**
@@ -60,39 +61,7 @@ export async function getData<T>(
   })
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch data: ${res.statusText}`)
-  }
-
-  return res.json()
-}
-
-export async function fetcher<JSON = any>(
-  input: RequestInfo,
-  init?: RequestInit
-): Promise<JSON> {
-  const session = await getSession()
-
-  if (!session?.user) {
-    throw new Error('Not authenticated')
-  }
-
-  const headers = new Headers(init?.headers)
-  headers.set('Authorization', `Bearer ${session.user.tokens.access}`)
-
-  const res = await fetch(input, {
-    ...init,
-    headers,
-  })
-
-  if (!res.ok) {
-    const contentType = res.headers.get('Content-Type')
-    if (contentType?.includes('application/json')) {
-      const json = await res.json()
-      throw new Error(json.error || 'An unexpected error occurred')
-    } else {
-      const text = await res.text()
-      throw new Error(`Unexpected response: ${text}`)
-    }
+    redirect('/auth-error')
   }
 
   return res.json()

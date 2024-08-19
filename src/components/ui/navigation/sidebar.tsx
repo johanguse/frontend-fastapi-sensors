@@ -14,16 +14,10 @@ import {
   WorkspacesDropdownMobile,
 } from './SidebarWorkspacesDropdown'
 import { UserProfileDesktop, UserProfileMobile } from './UserProfile'
-import {
-  RiHome2Line,
-  RiLinkM,
-  RiListCheck,
-  RiSettings5Line,
-} from '@remixicon/react'
+import { RiHome2Line, RiLinkM, RiSettings5Line } from '@remixicon/react'
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.overview, icon: RiHome2Line },
-  { name: 'Details', href: siteConfig.baseLinks.details, icon: RiListCheck },
   {
     name: 'Settings',
     href: siteConfig.baseLinks.settings,
@@ -49,9 +43,6 @@ const shortcuts = [
 export function Sidebar() {
   const pathname = usePathname()
   const isActive = (itemHref: string) => {
-    if (itemHref === siteConfig.baseLinks.settings) {
-      return pathname.startsWith('/settings')
-    }
     return pathname === itemHref || pathname.startsWith(itemHref)
   }
   return (

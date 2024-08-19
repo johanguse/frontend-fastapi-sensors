@@ -20,14 +20,12 @@ import {
 import {
   RiHome2Line,
   RiLinkM,
-  RiListCheck,
   RiMenuLine,
   RiSettings5Line,
 } from '@remixicon/react'
 
 const navigation = [
   { name: 'Overview', href: siteConfig.baseLinks.overview, icon: RiHome2Line },
-  { name: 'Details', href: siteConfig.baseLinks.details, icon: RiListCheck },
   {
     name: 'Settings',
     href: siteConfig.baseLinks.settings,
@@ -37,23 +35,15 @@ const navigation = [
 
 const shortcuts = [
   {
-    name: 'Add new user',
-    href: '#',
+    name: 'Github repo (frontend)',
+    href: 'https://github.com/johanguse/frontend-fastapi-sensors',
+    target: '_blank',
     icon: RiLinkM,
   },
   {
-    name: 'Workspace usage',
-    href: '#',
-    icon: RiLinkM,
-  },
-  {
-    name: 'Cost spend control',
-    href: '#',
-    icon: RiLinkM,
-  },
-  {
-    name: 'Overview – Rows written',
-    href: '#',
+    name: 'Github repo (backend)',
+    href: 'https://github.com/johanguse/backend-fastapi-sensors',
+    target: '_blank',
     icon: RiLinkM,
   },
 ] as const
@@ -73,7 +63,7 @@ export default function MobileSidebar() {
           <Button
             variant="ghost"
             aria-label="open sidebar"
-            className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-400/10 hover:dark:bg-gray-400/10 dark:data-[state=open]:bg-gray-100"
+            className="group flex items-center rounded-md p-2 text-sm font-medium hover:bg-gray-100 data-[state=open]:bg-gray-100 hover:dark:bg-gray-400/10 dark:data-[state=open]:bg-gray-400/10"
           >
             <RiMenuLine
               className="size-6 shrink-0 sm:size-5"
@@ -123,6 +113,7 @@ export default function MobileSidebar() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
+                        target={item.target}
                         className={cn(
                           pathname === item.href || pathname.includes(item.href)
                             ? 'text-indigo-600 dark:text-indigo-400'
